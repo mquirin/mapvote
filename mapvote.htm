@@ -30,7 +30,7 @@
   <body ng-app="appModule">
     <div class="container" ng-controller="appController">
       <div class="header clearfix">
-        <h3 class="text-muted">BKL MapVote v0.1</h3>
+        <h3 class="text-muted">BKL MapVote v0.2</h3>
       </div>
 
       <div class="jumbotron">
@@ -38,7 +38,15 @@
         <p class="lead" ng-show="voteStarted">Teamnamen:</p>
         <p>Team 1: <input ng-model="team_a" ng-readonly="voteStarted"/> </p>
         <p>Team 2: <input ng-model="team_b" ng-readonly="voteStarted"/> </p>
-        <p><button class="btn btn-lg btn-success" href="#" role="button" ng-disabled="!(team_a && team_b)" ng_click="voteStart()" ng-hide="voteStarted">Start MapVote</button></p>
+        <p class="lead" ng-hide="voteStarted">Bitte Turnier angeben:</p>
+        <p class="lead" ng-show="voteStarted">Turnier:</p>
+        <p>
+          <select ng-model="tournament" ng-disabled="voteStarted">
+            <option value="csgo-2on2">CS:GO 2on2</option>
+            <option value="csgo-5on5">CS:GO 5on5</option>
+          </select>
+        </p>
+        <p><button class="btn btn-lg btn-success" href="#" role="button" ng-disabled="!(team_a && team_b && tournament)" ng_click="voteStart()" ng-hide="voteStarted">Start MapVote</button></p>
       </div>
       
       <div class="jumbotron" ng-show="voteStarted">

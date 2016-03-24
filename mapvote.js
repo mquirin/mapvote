@@ -1,12 +1,21 @@
 var appModule = angular.module('appModule', []);
 appModule.controller("appController", 
 function($scope) {
-    $scope.allMaps = ['de_dust2', 'de_cache', 'de_cobblestone', 'de_mirage', 'de_overpass', 'de_train', 'de_inferno']
-    $scope.remainingMaps = $scope.allMaps.slice();
+    $5on5 = ['de_inferno', 'de_mirage', 'de_overpass', 'de_cache', 'de_dust2', 'de_cobblestone', 'de_train']
+    $2on2 = ['de_inferno', 'de_cache', 'de_dust2', 'de_dust', 'de_aztec']
+    // $scope.allMaps = $5on5
+    // $scope.remainingMaps = $scope.allMaps.slice();
     $scope.vetos = {}
     $scope.voteStart = function() {
         $scope.voteStarted = true;
         $scope.team_a_veto = true;
+        if($scope.tournament == "csgo-2on2") {
+            $scope.allMaps = $2on2
+        }
+        else if ($scope.tournament == "csgo-5on5") {
+            $scope.allMaps = $5on5
+        }
+        $scope.remainingMaps = $scope.allMaps.slice();
     };
     $scope.mapAvailable = function(map) {
         return _.contains($scope.remainingMaps, map);
