@@ -1,7 +1,7 @@
 var appModule = angular.module('appModule', []);
 appModule.controller("appController", 
 function($scope) {
-    $5on5 = ['de_inferno', 'de_mirage', 'de_overpass', 'de_cache', 'de_dust2', 'de_cobblestone', 'de_train']
+    $5on5 = ['de_inferno', 'de_mirage', 'de_overpass', 'de_cache', 'de_nuke', 'de_cobblestone', 'de_train']
     $2on2 = ['de_inferno', 'de_cache', 'de_dust2', 'de_dust', 'de_aztec']
     // $scope.allMaps = $5on5
     // $scope.remainingMaps = $scope.allMaps.slice();
