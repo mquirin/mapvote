@@ -2,102 +2,112 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-    <title>BK-LAN MapVote</title>
+        <title>BK-LAN MapVote</title>
 
-    <!--angular-->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-    
-    <!--_-->
-    <script src="https://underscorejs.org/underscore-min.js"></script>
-
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-    <!-- Custom styles for this template -->
-    <link href="mapvote.css" rel="stylesheet">
-    
-    <script src="mapvote.js"></script>
-  </head>
-
-  <body ng-app="appModule">
-    <div class="container" ng-controller="appController">
-      <div class="header clearfix">
-        <h3 class="text-muted">BKL MapVote v0.4</h3>
-      </div>
-
-      <div class="jumbotron">
-        <p class="lead" ng-hide="action!='started'">Bitte Teamnamen eingeben:</p>
-        <p class="lead" ng-show="action!='started'">Teamnamen:</p>
-        <p>Team 1: <input ng-model="team_a" ng-readonly="action!='started'"/> </p>
-        <p>Team 2: <input ng-model="team_b" ng-readonly="action!='started'"/> </p>
-        <p class="lead" ng-hide="action!='started'">Bitte Turnier angeben:</p>
-        <p class="lead" ng-show="action!='started'">Turnier:</p>
-        <p>
-          <select ng-model="tournament" ng-disabled="action!='started'">
-            <option value="csgo-2on2">CS:GO 2on2</option>
-            <option value="csgo-5on5">CS:GO 5on5</option>
-            <option value="csgo-5on5-playoffs">CS:GO 5on5 Playoffs (Best of 3)</option>
-          </select>
-        </p>
-        <p><button class="btn btn-lg btn-success" href="#" role="button" ng-disabled="!(team_a && team_b && tournament)" ng_click="voteStart()" ng-hide="action!='started'">Start MapVote</button></p>
-      </div>
-      
-      <div class="jumbotron" ng-show="action!='started'">
-        <h3 ng-show="team=='a'&&action=='veto'">Team "{{team_a}}": Bitte Veto abgeben</h3>
-        <h3 ng-show="team=='b'&&action=='veto'">Team "{{team_b}}": Bitte Veto abgeben</h3>
-        <h3 ng-show="team=='a'&&action=='pick'">Team "{{team_a}}": Bitte Pick abgeben</h3>
-        <h3 ng-show="team=='b'&&action=='pick'">Team "{{team_b}}": Bitte Pick abgeben</h3>
-        <p class="lead" ng-show="action=='random'">Vetos:</p>
-        <p class="lead" ng-show="action=='done'">Vetos / Picks:</p>
+        <!--angular-->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
         
-        <table class="table">
-        <tr ng-repeat="map in allMaps"> 
-            <td ng-style="mapStyle(map)">{{map}}</td>
-            <td ng-show="mapAvailable(map) && action!='random'">
-                <button ng_show="team=='a' && action=='veto'" ng-click="veto(map, 'a')">Veto von {{team_a}}</button>
-                <button ng_show="team=='b' && action=='veto'" ng-click="veto(map, 'b')">Veto von {{team_b}}</button>
-                <button ng_show="team=='a' && action=='pick'" ng-click="pick(map, 'a')">Pick von {{team_a}}</button>
-                <button ng_show="team=='b' && action=='pick'" ng-click="pick(map, 'b')">Pick von {{team_b}}</button>
-            </td>
-            <td>
-            <div ng-show="isMapVeto(map, 'a')">Veto von Team {{team_a}}!</div>
-            <div ng-show="isMapVeto(map, 'b')">Veto von Team {{team_b}}!</div>
-            <div ng-show="isMapPick(map, 'a')">Pick von Team {{team_a}}!</div>
-            <div ng-show="isMapPick(map, 'b')">Pick von Team {{team_b}}!</div>
-            <div ng-show="isMapPick(map, 'default')">Default Pick</div>
-            <div ng-show="mapAvailable(map) && action=='random'">In der Auslosung</div>
-            </td>
-        </tr>
-        </table>
-      </div>
-      
-      <div class="jumbotron" ng-show="action=='random'">
-        <p class="lead" ng-hide="finalMap">Auslosung:</p>
-        <p><button class="btn btn-lg btn-success" href="#" role="button" ng_show="action=='random' && !finalMap" ng-click="chooseFinal()">Auslosung starten</button></p>
-        <p ng-show="finalMap">Die finale Map ist:</p>
-        <h1 ng-show="finalMap"> {{finalMap}}</h1>
-      </div>
-      <div class="jumbotron" ng-show="pick_list[0]">
-          <h3 class="lead">Finale Auswahl:</h3>
-          <p>Erste Runde:</p>
-          <h2>{{pick_list[0]}}</h2>
-          <p>Zweite Runde:</p>
-          <h2>{{pick_list[1]}}</h2>
-          <p>Entscheidungsrunde:</p>
-          <h2>{{pick_list[2]}}</h2>
-      </div>
+        <!--_-->
+        <script src="https://underscorejs.org/underscore-min.js"></script>
 
-      <footer class="footer">
-        <p>&copy; 2018 BK-LAN e.V.</p>
-      </footer>
-    </div>
-  </body>
+        <script src="jquery-3.3.1.min.js"></script>
+        <script src="bootstrap.min.js"></script>
+
+        <!-- Bootstrap core CSS -->
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> -->
+        <link rel="stylesheet" href="theme.min.css">
+
+        <!-- Custom styles for this template -->
+        <link href="mapvote.css" rel="stylesheet">
+        
+        <script src="mapvote.js"></script>
+    </head>
+
+    <body ng-app="appModule">
+        <div class="container" ng-controller="appController">
+            <div class="header clearfix">
+                <h3 class="text-muted">BKL MapVote v0.4</h3>
+            </div>
+
+            <div class="jumbotron">
+                <p class="lead" ng-hide="action!='started'">Bitte Teamnamen eingeben:</p>
+                <p class="lead" ng-show="action!='started'">Teamnamen:</p>
+                <p>Team 1: <input ng-model="team_a" ng-readonly="action!='started'"/> </p>
+                <p>Team 2: <input ng-model="team_b" ng-readonly="action!='started'"/> </p>
+                <p class="lead" ng-hide="action!='started'">Bitte Turnier angeben:</p>
+                <p class="lead" ng-show="action!='started'">Turnier:</p>
+                <p>
+                    <!-- Single button -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 8px 12px; font-size: 14px;" ng-disabled="action!='started'">
+                            {{tournament_title}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" ng-click="tournament='csgo-2on2';tournament_title='CS:GO 2on2'">CS:GO 2on2</a></li>
+                            <li><a href="#" ng-click="tournament='csgo-5on5';tournament_title='CS:GO 5on5'">CS:GO 5on5</a></li>
+                            <li><a href="#" ng-click="tournament='csgo-5on5-playoffs';tournament_title='CS:GO 5on5 Playoffs (Best of 3)'">CS:GO 5on5 Playoffs (Best of 3)</a></li>
+                        </ul>
+                    </div>
+                </p>
+                <p><button class="btn btn-lg btn-primary" href="#" role="button" ng-disabled="!(team_a && team_b && tournament)" ng_click="voteStart()" ng-hide="action!='started'">Start MapVote</button></p>
+            </div>
+            
+            <div class="jumbotron" ng-show="action!='started'">
+                <h3 ng-show="team=='a'&&action=='veto'">Team "{{team_a}}": Bitte Veto abgeben</h3>
+                <h3 ng-show="team=='b'&&action=='veto'">Team "{{team_b}}": Bitte Veto abgeben</h3>
+                <h3 ng-show="team=='a'&&action=='pick'">Team "{{team_a}}": Bitte Pick abgeben</h3>
+                <h3 ng-show="team=='b'&&action=='pick'">Team "{{team_b}}": Bitte Pick abgeben</h3>
+                <p class="lead" ng-show="action=='random'">Vetos:</p>
+                <p class="lead" ng-show="action=='done'">Vetos / Picks:</p>
+                
+                <table class="table">
+                    <tr ng-repeat="map in allMaps"> 
+                        <td ng-style="mapStyle(map)">{{map}}</td>
+                        <td ng-show="mapAvailable(map) && action!='random'">
+                            <button class="btn-small btn-primary" ng_show="team=='a' && action=='veto'" ng-click="veto(map, 'a')">Veto von {{team_a}}</button>
+                            <button class="btn-small btn-primary" ng_show="team=='b' && action=='veto'" ng-click="veto(map, 'b')">Veto von {{team_b}}</button>
+                            <button class="btn-small btn-primary" ng_show="team=='a' && action=='pick'" ng-click="pick(map, 'a')">Pick von {{team_a}}</button>
+                            <button class="btn-small btn-primary" ng_show="team=='b' && action=='pick'" ng-click="pick(map, 'b')">Pick von {{team_b}}</button>
+                        </td>
+                        <td>
+                            <div ng-show="isMapVeto(map, 'a')">Veto von Team {{team_a}}!</div>
+                            <div ng-show="isMapVeto(map, 'b')">Veto von Team {{team_b}}!</div>
+                            <div ng-show="isMapPick(map, 'a')">Pick von Team {{team_a}}!</div>
+                            <div ng-show="isMapPick(map, 'b')">Pick von Team {{team_b}}!</div>
+                            <div ng-show="isMapPick(map, 'default')">Decider Map</div>
+                            <div ng-show="mapAvailable(map) && action=='random'">In der Auslosung</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="jumbotron" ng-show="action=='random'">
+                <p class="lead" ng-hide="finalMap">Auslosung:</p>
+                <p><button class="btn btn-lg btn-primary" href="#" role="button" ng_show="action=='random' && !finalMap" ng-click="chooseFinal()">Auslosung starten</button></p>
+                <p ng-show="finalMap">Die finale Map ist:</p>
+                <h1 ng-show="finalMap"> {{finalMap}}</h1>
+            </div>
+            <div class="jumbotron" ng-show="pick_list[0]">
+                <h3 class="lead">Finale Auswahl:</h3>
+                <p>Erste Runde:</p>
+                <h2>{{pick_list[0]}}</h2>
+                <p>Zweite Runde:</p>
+                <h2>{{pick_list[1]}}</h2>
+                <p>Decider Map:</p>
+                <h2>{{pick_list[2]}}</h2>
+            </div>
+
+            <footer class="footer">
+                <p>&copy; 2018 BK-LAN e.V.</p>
+            </footer>
+        </div>
+    </body>
 </html>

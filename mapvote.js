@@ -10,6 +10,7 @@ function($scope) {
     $scope.picks = {}; // map -> team
     $scope.pick_list = [];
     $scope.action = "started";
+    $scope.tournament_title = "Turnier Auswahl"
     $scope.voteStart = function() {
         $scope.team = "a";
         $scope.action = "veto";
